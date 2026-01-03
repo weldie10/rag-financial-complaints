@@ -50,6 +50,9 @@ ENV/
 # Vector store
 vector_store/*
 !vector_store/.gitkeep
+data/raw/
+*.parquet
+*.csv
 
 # Logs
 *.log
