@@ -1,0 +1,43 @@
+# Data Manipulation and Analysis
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Machine Learning
+scikit-learn>=1.3.0
+xgboost>=2.0.0
+lightgbm>=4.0.0
+
+# Model Explainability
+shap>=0.42.0
+
+# Data Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+plotly>=5.15.0
+
+# Statistical Analysis
+scipy>=1.10.0
+
+# Handling Imbalanced Data
+imbalanced-learn>=0.11.0
+
+# Jupyter Notebook Support
+jupyter>=1.0.0
+ipykernel>=6.25.0
+notebook>=7.0.0
+
+# Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+
+# Model Serialization
+joblib>=1.3.0
+
+# Progress Bars
+tqdm>=4.66.0
+
+# Configuration Management
+python-dotenv>=1.0.0
+
+# Data Validation (Optional but recommended)
+pydantic>=2.0.0
