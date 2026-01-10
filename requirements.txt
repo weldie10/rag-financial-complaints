@@ -53,3 +53,8 @@ torch>=2.0.0
 # Vector Stores
 faiss-cpu>=1.7.4  # Use faiss-gpu>=1.7.4 for GPU support
 chromadb>=0.4.0
+
+# LLM and Generation
+transformers>=4.35.0
+accelerate>=0.24.0
+bitsandbytes>=0.41.0  # Optional: for quantization
