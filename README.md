@@ -30,10 +30,16 @@ A Retrieval-Augmented Generation (RAG) system for processing and analyzing finan
 │   ├── text_chunker.py                   # Task 2: Text chunking strategies
 │   ├── embedding_generator.py            # Task 2: Embedding generation
 │   ├── vector_store_manager.py           # Task 2: FAISS/ChromaDB vector store
-│   └── indexing_pipeline.py             # Task 2: Complete indexing pipeline
+│   ├── indexing_pipeline.py             # Task 2: Complete indexing pipeline
+│   ├── retriever.py                      # Task 3: RAG retriever component
+│   ├── generator.py                      # Task 3: LLM generator component
+│   ├── prompt_template.py                # Task 3: Prompt templates
+│   ├── rag_pipeline.py                   # Task 3: Complete RAG pipeline
+│   └── evaluation.py                     # Task 3: RAG evaluation utilities
 ├── tests/
 │   └── __init__.py
-├── app.py                            # Gradio/Streamlit interface
+├── app.py                            # Task 4: Interactive Gradio chat interface
+├── evaluate_rag.py                   # Task 3: RAG system evaluation script
 ├── requirements.txt
 ├── README.md
 └── .gitignore
@@ -167,11 +173,84 @@ vector_store.add_vectors(embeddings, metadata_list)
 save_vector_store(vector_store, "vector_store/", store_type="faiss")
 ```
 
-### Running the Application
+### Task 4: Interactive Chat Interface
 
-Run the Gradio/Streamlit interface:
+The project includes a user-friendly Gradio web interface that allows non-technical users to interact with the RAG system.
+
+#### Running the Application
+
+Start the interactive chat interface:
 ```bash
 python app.py
+```
+
+The interface will launch at `http://localhost:7860` (or the URL shown in the terminal).
+
+#### Interface Features
+
+**Core Functionality:**
+- **Text Input Box**: Enter your questions about financial complaints
+- **Ask Question Button**: Submit your query to the RAG system
+- **Answer Display**: View the AI-generated answer in a dedicated text area
+- **Enter Key Support**: Press Enter to quickly submit questions
+
+**Enhanced Features for Trust and Usability:**
+- **Source Display**: Below each answer, view the retrieved complaint chunks that were used to generate the response, including:
+  - Complaint ID
+  - Product type
+  - Issue category
+  - Text preview
+  - Similarity scores
+- **Streaming Responses**: Answers appear progressively (word-by-word) for better user experience
+- **Clear Button**: Reset the conversation and start fresh
+- **Example Questions**: Pre-loaded example questions for quick testing
+- **Copy Button**: Easy copying of answers for documentation
+
+#### Configuration
+
+The interface features:
+- Modern, intuitive UI with Gradio's Soft theme
+- Progress indicators during processing
+- Error handling with user-friendly messages
+- Instructions and documentation built into the interface
+
+#### Customization
+
+You can customize the RAG pipeline settings in `app.py`:
+
+```python
+# In the main() function:
+vector_store_path = "vector_store"
+embedding_model = "sentence-transformers/all-MiniLM-L6-v2"
+use_simple_generator = True  # Set to False for full models
+generator_model = "gpt2"  # Change to use different LLM models
+```
+
+#### Using the RAG Pipeline Programmatically
+
+You can also use the RAG pipeline directly in Python:
+
+```python
+from src.rag_pipeline import create_pipeline
+
+# Initialize the pipeline
+pipeline = create_pipeline(
+    vector_store_path="vector_store",
+    embedding_model="sentence-transformers/all-MiniLM-L6-v2",
+    use_simple_generator=True,
+    generator_model="gpt2"
+)
+
+# Query the system
+result = pipeline.query(
+    "What are the most common issues with credit card complaints?",
+    return_sources=True
+)
+
+print("Answer:", result['answer'])
+print("\nSources:")
+for i, source in enumerate(result['sources']):
+    print(f"Source {i+1}: {source.get('complaint_id')} - {source.get('product')}")
 ```
 
 ## Module Documentation
@@ -226,6 +305,29 @@ python app.py
 - **`create_vector_store()`**: Factory function to create vector store
 - **`save_vector_store()` / `load_vector_store()`**: Save and load utilities
 
+### `src/retriever.py`
+- **`RAGRetriever`**: Semantic search retriever for RAG system
+  - `retrieve()`: Retrieve top-k relevant chunks for a question
+  - `format_context()`: Format retrieved chunks into context string
+
+### `src/generator.py`
+- **`RAGGenerator`**: LLM generator for RAG system
+  - `generate()`: Generate response from prompt
+  - Supports various Hugging Face models (Mistral, Llama, etc.)
+- **`SimpleGenerator`**: Lightweight generator using smaller models (GPT-2, etc.)
+
+### `src/prompt_template.py`
+- **`PromptTemplate`**: Prompt template management
+  - `format()`: Format prompt with context and question
+  - `create_analyst_template()`: Create financial analyst-focused template
+  - `create_summary_template()`: Create summarization-focused template
+
+### `src/rag_pipeline.py`
+- **`RAGPipeline`**: Complete RAG pipeline combining retrieval and generation
+  - `query()`: Process a query and return answer with sources
+  - `format_sources()`: Format sources for display
+- **`create_pipeline()`**: Factory function to create RAG pipeline with defaults
+
 ## Testing
 
 Run tests:
@@ -248,6 +350,8 @@ pytest tests/ -v --cov=src --cov-report=html
 - **Text Chunking**: Intelligent text chunking with LangChain support
 - **Embedding Generation**: Fast embedding generation with sentence-transformers
 - **Vector Store**: FAISS and ChromaDB support with metadata storage
+- **RAG System**: Complete retrieval-augmented generation pipeline with semantic search
+- **Interactive Interface**: User-friendly Gradio web interface with streaming responses and source display
 - **CI/CD**: GitHub Actions workflow for automated testing
 
 ## Data Preprocessing Pipeline
@@ -276,6 +380,14 @@ The preprocessing pipeline includes:
   - `metadata.pkl`: Metadata for all vectors
   - `index_info.pkl`: Index configuration and statistics
 - **Logs**: `indexing.log`
+
+### Task 3: RAG Pipeline
+- **Evaluation Results**: Generated by `evaluate_rag.py`
+- **Logs**: `rag_evaluation.log`
+
+### Task 4: Interactive Interface
+- **Web Interface**: Accessible at `http://localhost:7860` when running `app.py`
+- **Screenshots/Demo**: See `PROJECT_REPORT.md` for screenshots and demonstration of the working application
 
 ## Task 2 Report
 
